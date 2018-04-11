@@ -8,12 +8,12 @@ module adder
     assign y = a + b;
 endmodule
 
-module mult
+module multiply
 (input [31:0] a, b, output [63:0] y);
     assign y = a * b;
 endmodule
 
-module hilo
+module hiloreg
 (input [63:0] a, output [31:0] hi, lo);
 
 assign hi = a[63:32];

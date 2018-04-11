@@ -1,5 +1,5 @@
 module datapath
-(input clk, rst, pc_src, jump, reg_dst, we_reg, alu_src, jr, HLwrite, HLmux, dm2reg, mult_to_reg, link,  [2:0] alu_ctrl, [4:0] ra3, [31:0] instr, rd_dm, output zero, [31:0] pc_current, alu_out, wd_dm, rd3);
+(input clk, rst, pc_src, jump, reg_dst, we_reg, alu_src, dm2reg, jr, HLwrite, HLmux, mult_to_reg, link, [2:0] alu_ctrl, [4:0] ra3, [31:0] instr, rd_dm, output zero, [31:0] pc_current, alu_out, wd_dm, rd3);
     wire [4:0]  rf_wa;
     wire [31:0] pc_plus4, pc_pre, pc_next, sext_imm, ba, bta, jta, alu_pa, alu_pb, wd_rf, jr_out, hi_reg, lo_reg, mult_result, wd_to_mult, result, rf_mux_out;
     wire [63:0] mult_out;
@@ -7,11 +7,11 @@ module datapath
     assign jta = {pc_plus4[31:28], instr[25:0], 2'b00};
     // --- PC Logic --- //
     dreg       pc_reg     (clk, rst, pc_next, pc_current);
-    hilo    (mult_out, hi_reg, lo_reg);
     adder      pc_plus_4  (pc_current, 4, pc_plus4);
     adder      pc_plus_br (pc_plus4, ba, bta);
     // added mult below
-    mult    (alu_pa, wd_dm, mult_out);
+    multiply    mult(alu_pa, wd_dm, mult_out);
+    hiloreg    hilo(mult_out, hi_reg, lo_reg);
     mux2 #(32) pc_src_mux (pc_src, jr_out, bta, pc_pre);
     mux2 #(32) pc_jmp_mux (jump, pc_pre, jta, pc_next);
     mux2 #(32) jr_mux (jr, pc_plus4, alu_pa, jr_out);
